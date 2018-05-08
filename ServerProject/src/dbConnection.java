@@ -3,6 +3,8 @@ import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -34,4 +36,15 @@ public class dbConnection {
         }
         return con;
     }
+    
+    public void closeConnection(){
+         if(con != null)
+                try {
+                    con.close();
+            } catch (SQLException ex) {
+                    System.out.println("Err : "+ex.getMessage());
+            }
+    }
+    
+    
 }

@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 public class User {
     private String id;
     private String pwd;
-
+    dbConnection con = new dbConnection();
     /**
      * @return the id
      */
@@ -51,6 +51,13 @@ public class User {
     public void setPwd(String pwd) {
         this.pwd = pwd;
     }
+
+    public User()
+    {
+        this.id = "";
+        this.pwd = "";
+    }
+
     
     public User(String idX, String pwdX)
     {
@@ -58,9 +65,11 @@ public class User {
         this.pwd = pwdX;
     }
     
-    public boolean addUser()
+    public boolean addUser(String xID,String xPwd)
     {
         boolean msg = false;
+        //INSERT TO DB
+        
         
         return msg;
     }
@@ -68,10 +77,16 @@ public class User {
     {
         boolean msg = false;
         
+        
         return msg;
     }
-    
-    
+    public boolean loginUser(String xID,String xPwd)
+    {
+        boolean msg = false;
+        //QUERY SELECT
+         
+        return msg;
+    } 
     
     
 }

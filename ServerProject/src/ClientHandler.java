@@ -26,9 +26,12 @@ public class ClientHandler extends Thread{
     private Thread t;
     private String namaThread = "thread";
     private User usr = new User();
-    private ArrayList<User> data_usr = usr.getUser();
     
+    private Sheet sh = new Sheet();//Edit Lembar Kerja
+    String idx,pwdx;//JUST EXAMPLE
     
+    private ArrayList<User> data_usr; // = new ArrayList<User>; - RAGU
+        
     public ClientHandler(Socket socket)
     {
         client = socket;
@@ -56,16 +59,24 @@ public class ClientHandler extends Thread{
                 {
                     if((data[0]).equals(data_usr.get(x).getId()))
                     {
-                        status =1;
-                        break;
+                        status = 1;
+                        break;    
+                    }
+                    else
+                    {
+                        //Belum Register - USER Register
+                        usr.addUser(idx,pwdx);
                     
-                    }             
+                    }
                 }
-            
+                if(data[1].equals("location"))
+                {
+                    sh.editSheet(data[2],data[3]);
+                    //Fetch Data from Sheet Koneksi ke DB PARAM loc & DATA
+                }
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-    
-    }
-    
+    }    
 }

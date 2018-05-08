@@ -16,7 +16,9 @@ import java.net.Socket;
  * @author fernando
  */
 public class Client {
-        private static final int PORT =1234;
+    //DECLARING PORT
+    private static final int PORT =1234;
+    
     public static void main(String[] args) {
         Socket sock = null;
         try {

@@ -39,14 +39,16 @@ public class Sheet {
     public void setDesc(String desc) {
         this.desc = desc;
     }
+    
     public Sheet()
     {
-    
+        
     }
-    public boolean editSheet()
+    public boolean editSheet(String xLoc, String xData)
     {
         boolean msg = false;
-        
+        //EDIT QUERY-KE DATABASE
+        //INSERT ke TBL LOG
         return msg;
     
     }
