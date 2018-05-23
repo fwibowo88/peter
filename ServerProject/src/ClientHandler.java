@@ -91,9 +91,14 @@ public class ClientHandler extends Thread{
                     System.out.println("CMD >> "+ "Server Off");
                     server.losingClient(this);
                 }
-                else if(clientCmd.equalsIgnoreCase("broadcast"))
+                else if(clientCmd.equalsIgnoreCase("all"))
                 {
                     server.BroadcastMsg("Halo Broadcast");
+                
+                }
+                else if(clientCmd.equalsIgnoreCase("test"))
+                {
+                    server.BroadcastMsg("Hello World!");
                 
                 }
             

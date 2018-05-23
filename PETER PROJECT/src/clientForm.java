@@ -1,11 +1,19 @@
 
+import com.sun.management.jmx.Trace;
 import static com.sun.xml.internal.fastinfoset.alphabet.BuiltInRestrictedAlphabets.table;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 //import com.itextpdf.text.Document;
 import java.text.MessageFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 
 /*
@@ -20,12 +28,19 @@ import javax.swing.JTable;
  */
 
 public class clientForm extends javax.swing.JFrame {
-DefaultTableModel model;
+
+    //MODEL JTABLE
+    DefaultTableModel model;
+    //DECLARE VAR
+    String in;
+    String out;
+    
     /**
      * Creates new form clientForm
      */
-    public clientForm() {
+    public clientForm() throws IOException {
         initComponents();
+        //EVENT TABLE LISTENER
         model = (DefaultTableModel)tblWorking.getModel();
         model.addTableModelListener(new TableModelListener(){
             public void tableChanged(TableModelEvent e)
@@ -35,6 +50,30 @@ DefaultTableModel model;
                 System.out.println(a);
             }
         });
+        System.out.println("CLIENT APP");
+        while(true)
+        {
+            Socket clientSock = new Socket("localhost",8888);
+            boolean stop = true;
+            ConHandler handler = new ConHandler(clientSock);
+            handler.start();
+            
+            BufferedReader fromClient = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSock.getInputStream()));
+            DataOutputStream outToServer = new DataOutputStream((clientSock.getOutputStream()));
+            
+            while(stop)
+            {
+                out = fromClient.readLine();
+                
+                outToServer.writeBytes(out+"\n");
+                if(out.equals("quit"))
+                {
+                    clientSock.close();
+                    stop= false;
+                }            
+            }
+        }
     }
 
     /**
@@ -181,32 +220,7 @@ DefaultTableModel model;
     }//GEN-LAST:event_txtChatActionPerformed
 
     private void btnPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPDFActionPerformed
-        // TODO add your handling code here:
-//        try
-//        {
-//            Document doc = new Document();
-//            PdfWriter.getInstance(doc, new FileOutputStream("table.pdf"));
-//            doc.open();
-//            PdfPTable pdfTable = new PdfPTable(jTable1.getColumnCount());
-//            for (int i = 0; i < jTable1.getColumnCount(); i++)
-//            {
-//                pdfTable.addCell(jTable1.getColumnName(i));
-//            }
-//            for(int rows = 0; rows < jTable1.getRowCount() - 1; rows++)
-//            {
-//                for(int cols = 0; cols < jTable1.getColumnCount(); cols++)
-//                {
-//                    pdfTable.addCell(jTable1.getModel().getValueAt(rows,cols).toString());
-//                }
-//            }
-//            doc.add(pdfTable);
-//            doc.close();
-//            System.out.println("done");
-//        }
-//        catch(Exception e)
-//        {
-//            System.out.println(e.getMessage());
-//        }
+
         MessageFormat header = new MessageFormat("Report Print");
         MessageFormat footer = new MessageFormat("page 1");
         try
@@ -249,8 +263,13 @@ DefaultTableModel model;
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
-                new clientForm().setVisible(true);
+                try {
+                    new clientForm().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(clientForm.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }

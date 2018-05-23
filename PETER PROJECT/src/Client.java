@@ -51,7 +51,7 @@ public class Client {
     //CONSTRUCTOR
     public Client()
     {
-    
+        
     }    
     public Client(String xAddr,int xPort)
     {

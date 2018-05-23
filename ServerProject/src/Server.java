@@ -35,7 +35,7 @@ public class Server {
         
         int x = 1;
         try {
-            ServerSocket ss = new ServerSocket(3321);
+            ServerSocket ss = new ServerSocket(8888);
             while (serverOn) {
                 Socket cliSocket = ss.accept();
                 ClientHandler cliThread = new ClientHandler(cliSocket,this,"Service" + x);
