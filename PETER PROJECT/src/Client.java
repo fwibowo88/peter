@@ -16,57 +16,48 @@ import java.net.Socket;
  * @author fernando
  */
 public class Client {
-    //DECLARING PORT
-    private static final int PORT =1234;
+    //NET ATTRIBUTE
+    private String srvAddres;
+    private int port;
+
+    //PROPERTIES
+    /**
+     * @return the srvAddres
+     */
+    public String getSrvAddres() {
+        return srvAddres;
+    }
+
+    /**
+     * @param srvAddres the srvAddres to set
+     */
+    public void setSrvAddres(String srvAddres) {
+        this.srvAddres = srvAddres;
+    }
+
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
+
+    /**
+     * @param port the port to set
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+    //CONSTRUCTOR
+    public Client()
+    {
     
-    public static void main(String[] args) {
-        Socket sock = null;
-        try {
-            sock = new Socket("localhost",PORT);
-            BufferedReader netInput = new BufferedReader(new InputStreamReader(sock.getInputStream()));
-            DataOutputStream netOutput = new DataOutputStream(sock.getOutputStream());
-            
-            BufferedReader usrEntry = new BufferedReader(new InputStreamReader(System.in));
-            String message, response, id,pwd;
-            int status =0;
-            response = netInput.readLine();
-            System.out.print("\nServer> " +response);
-            while(status != 1)
-            {
-                System.out.print("ID : ");
-                id = usrEntry.readLine();
-                System.out.print("PWD : ");
-                pwd = usrEntry.readLine();
-                netOutput.writeBytes(id+"-"+pwd+"\n");
-                status = Integer.parseInt(netInput.readLine());
-                response = netInput.readLine();
-                System.out.println("\nServer : " +response);
-            }
-            do
-            {
-                response = netInput.readLine();
-                System.out.println("\nServer : "+response);
-                System.out.print("Input D");
-                message = usrEntry.readLine();
-                netOutput.writeBytes(message + "\n");
-            
-            }while(!message.equals(3));
-            
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        }
-        
-        finally{
-        
-            try {
-                System.out.println("\nCLOSING CONNECTION . . .");
-                sock.close();
-            } catch (IOException ex) {
-                System.out.println("FAIL TO CLOSE CONNECTION.");
-                System.exit(1);
-            }
-            
-        }
-    }  
+    }    
+    public Client(String xAddr,int xPort)
+    {
+        this.srvAddres = xAddr;
+        this.port = xPort;
+    }
+    
     
 }
