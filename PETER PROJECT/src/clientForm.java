@@ -1,3 +1,10 @@
+
+import java.text.MessageFormat;
+import javax.swing.JTable;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -8,13 +15,23 @@
  *
  * @author fernando
  */
-public class clientForm extends javax.swing.JFrame {
 
+public class clientForm extends javax.swing.JFrame {
+DefaultTableModel model;
     /**
      * Creates new form clientForm
      */
     public clientForm() {
         initComponents();
+        model = (DefaultTableModel)jTableSheet.getModel();
+        model.addTableModelListener(new TableModelListener(){
+            public void tableChanged(TableModelEvent e)
+            {
+                System.out.println(e.getColumn()+"-"+e.getLastRow());
+                String a = model.getValueAt(e.getLastRow(), e.getColumn()).toString();
+                System.out.println(a);
+            }
+        });
     }
 
     /**
@@ -37,7 +54,7 @@ public class clientForm extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jTableSheet = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -64,8 +81,13 @@ public class clientForm extends javax.swing.JFrame {
         jButton3.setText("PROFIL SAYA");
 
         jButton4.setText("SIMPAN PDF");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTableSheet.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
@@ -92,7 +114,7 @@ public class clientForm extends javax.swing.JFrame {
                 "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "J", "K", "L"
             }
         ));
-        jScrollPane3.setViewportView(jTable1);
+        jScrollPane3.setViewportView(jTableSheet);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -155,6 +177,20 @@ public class clientForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtChatActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        MessageFormat header = new MessageFormat("Report Print");
+        MessageFormat footer = new MessageFormat("page 1");
+        try
+        {
+            jTableSheet.print(JTable.PrintMode.NORMAL, header, footer);
+        }
+        catch(Exception e)
+        {
+            System.out.println("error");
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -199,7 +235,7 @@ public class clientForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTableSheet;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
     private javax.swing.JTextField txtChat;
