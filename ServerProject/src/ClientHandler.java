@@ -1,12 +1,11 @@
 
+import com.sun.istack.internal.logging.Logger;
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,64 +18,109 @@ import java.util.logging.Logger;
  * @author fernando
  */
 public class ClientHandler extends Thread{
-    private Socket client;
-    private BufferedReader input;
-    private DataOutputStream output;
     
     private Thread t;
-    private String namaThread = "thread";
-    private User usr = new User();
+    private String nameThread;
     
-    private Sheet sh = new Sheet();//Edit Lembar Kerja
-    String idx,pwdx;//JUST EXAMPLE
+    private boolean runThread =true;
     
-    private ArrayList<User> data_usr; // = new ArrayList<User>; - RAGU
-        
-    public ClientHandler(Socket socket)
+    //NET ATTRIBUTTE
+    private Socket clientSocket;
+    private BufferedReader in;
+    private PrintStream out;
+    
+    
+    private Server server;
+    
+    public ClientHandler(Socket sockx, Server parent, String name)
     {
-        client = socket;
         try {
-            input = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            output = new DataOutputStream(client.getOutputStream());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+            this.clientSocket = sockx;
+            this.server = parent;
+            this.nameThread = name;
+            in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            out = new PrintStream(clientSocket.getOutputStream());
+        } catch (IOException ex) {
+            //Logger.getLogger(ClientHandler.class.getName()).log(Level.SEVERE,null,ex);
         }
+    }
+    public String getNameThread()
+    {
+        return nameThread;
+    
+    }
+    public void setNameThread(String xName)
+    {
+        this.nameThread = xName;
+        t.setName(xName);
+    
     }
     
     @Override
     public void run()
     {
         try {
-            String received;
-            output.writeBytes("PLASE LOGIN : ");
-            int status = 0;
-            while(status !=1)
+            System.out.println("Accept Address Client : "+clientSocket.getInetAddress().getHostName());
+            out.println("Anda Terhubung dalam Server");
+            
+            while(runThread)
             {
-                received = input.readLine();
-                System.out.println(received);
-                String[] data = received.split("-");
-                for(int x = 0;x<data_usr.size();x++)
+                String clientCmd = in.readLine();
+                System.out.println("CMD >> " + clientCmd);
+                server.DisplayReceived(nameThread, clientCmd);
+                
+                if(!server.isServerOn())
                 {
-                    if((data[0]).equals(data_usr.get(x).getId()))
-                    {
-                        status = 1;
-                        break;    
-                    }
-                    else
-                    {
-                        //Belum Register - USER Register
-                        usr.addUser(idx,pwdx);
-                    
-                    }
+                    System.out.println("CMD >> Server Off");
+                    out.println("OFF");
+                    this.ServiceOff();
+                
                 }
-                if(data[1].equals("location"))
+                else if(clientCmd.equalsIgnoreCase("quit"))
                 {
-                    sh.editSheet(data[2],data[3]);
-                    //Fetch Data from Sheet Koneksi ke DB PARAM loc & DATA
+                    this.ServiceOff();
+                    server.Shutdown();
+                    System.out.println("CMD >> " + "Client Offline");
+                    server.losingClient(this);
                 }
+                else if(clientCmd.equalsIgnoreCase("end"))
+                {
+                    this.ServiceOff();
+                    server.Shutdown();
+                    System.out.println("CMD >> " + "Client Offline");
+                    System.out.println("CMD >> "+ "Server Off");
+                    server.losingClient(this);
+                }
+                else if(clientCmd.equalsIgnoreCase("broadcast"))
+                {
+                    server.BroadcastMsg("Halo Broadcast");
+                
+                }
+            
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Try Readline : "+e.getMessage());
+            server.losingClient(this);
         }
-    }    
+    
+    }
+    public void ServiceOff()
+    {
+        this.runThread = false;
+    }
+    public void ServiceOn()
+    {
+        this.runThread = true;
+    
+    }
+    public void sendMessage(String message)
+    {
+        out.println(message);
+    
+    }
+    public String toString()
+    {
+        return nameThread;
+    
+    }
 }

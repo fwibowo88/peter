@@ -2,7 +2,7 @@
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.time.Clock;
+import java.util.ArrayList;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -15,27 +15,71 @@ import java.time.Clock;
  * @author fernando
  */
 public class Server {
-    private static ServerSocket serverSocket;
-    private static final int port =1234;
+    private boolean serverOn = true;
+    //SAVE CONNECTED CLIENT
+    ArrayList<ClientHandler> listOfClient;
     
-    public static void main(String[] args) throws IOException{
-        try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("SERVER STARTED, WAITING CLIENT . . .");
-            
-        } catch (Exception e) {
-            System.out.println("\nTidak dapat menutup Port!");
-            System.exit(1);
-        }
-        while(true)
-        {
-            Socket clientSocket = serverSocket.accept();
-            System.out.println("NEW CLIENT CONNECTED.");
-            
-            ClientHandler handler = new ClientHandler(clientSocket);
-            handler.start();
+    public boolean isServerOn()
+    {
+        return serverOn;
+    
+    }
+    public void setServerOn(boolean serverOn)
+    {
+        this.serverOn = serverOn;
+    
+    }
+    public Server()
+    {
+        listOfClient = new ArrayList<ClientHandler>();
         
+        int x = 1;
+        try {
+            ServerSocket ss = new ServerSocket(3321);
+            while (serverOn) {
+                Socket cliSocket = ss.accept();
+                ClientHandler cliThread = new ClientHandler(cliSocket,this,"Service" + x);
+                x++;
+                listOfClient.add(cliThread);
+                
+                cliThread.start();
+                
+                //SENT TO CLIENT LIST
+            }
+        } catch (IOException e) {
+            System.out.println("Try main Server : "+e.getMessage());
         }
     
     }
+    public void Shutdown()
+    {
+        this.serverOn = false;
+        
+    }
+    public void Active()
+    {
+        this.serverOn = true;
+    
+    }
+    
+    public void BroadcastMsg(String msg)
+    {
+        for(ClientHandler client : listOfClient)
+        {
+            client.sendMessage(msg);
+        
+        }
+        
+    }
+    public void DisplayReceived(String nama,String pesan)
+    {
+        System.out.println(nama = ": " +pesan);
+    
+    }
+    public void losingClient(ClientHandler ch)
+    {
+        listOfClient.remove(ch);
+    
+    }
+    
 }

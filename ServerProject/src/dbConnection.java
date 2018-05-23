@@ -2,6 +2,7 @@
 import com.mysql.jdbc.Connection;
 import com.mysql.jdbc.Statement;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -16,7 +17,7 @@ import java.util.logging.Level;
  *
  * @author fernando
  */
-public class dbConnection {
+public class dbConnection{
     private String uid = "root";
     private String pwd = "";
         
@@ -37,6 +38,18 @@ public class dbConnection {
         return con;
     }
     
+    public boolean checkCon() throws SQLException
+    {
+        boolean msg = false;
+        if(!con.isClosed())
+        {
+            msg = true;
+        }
+        return msg;
+    
+    }
+    
+    
     public void closeConnection(){
          if(con != null)
                 try {
@@ -46,5 +59,9 @@ public class dbConnection {
             }
     }
     
+    public PreparedStatement getP(String sql) throws SQLException
+    {
+        return con.prepareStatement(sql);
     
+    }
 }
