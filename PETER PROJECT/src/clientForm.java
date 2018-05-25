@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JTable;
 
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -28,53 +29,31 @@ import javax.swing.JTable;
  */
 
 public class clientForm extends javax.swing.JFrame {
-
+    Socket s = new Socket("localhost",8888);
+    Client_1 c = new Client_1();
+    ConHandler_1 cHandler  = new ConHandler_1(s, c);
+    
     //MODEL JTABLE
     DefaultTableModel model;
-    //DECLARE VAR
-    String in;
-    String out;
-    
     /**
      * Creates new form clientForm
+     * @throws java.io.IOException
      */
     public clientForm() throws IOException {
         initComponents();
         //EVENT TABLE LISTENER
         model = (DefaultTableModel)tblWorking.getModel();
         model.addTableModelListener(new TableModelListener(){
+            @Override
             public void tableChanged(TableModelEvent e)
             {
                 System.out.println(e.getColumn()+"-"+e.getLastRow());
                 String a = model.getValueAt(e.getLastRow(), e.getColumn()).toString();
                 System.out.println(a);
             }
-        });
-        System.out.println("CLIENT APP");
-        while(true)
-        {
-            Socket clientSock = new Socket("localhost",8888);
-            boolean stop = true;
-            ConHandler handler = new ConHandler(clientSock);
-            handler.start();
-            
-            BufferedReader fromClient = new BufferedReader(new InputStreamReader(System.in));
-            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSock.getInputStream()));
-            DataOutputStream outToServer = new DataOutputStream((clientSock.getOutputStream()));
-            
-            while(stop)
-            {
-                out = fromClient.readLine();
-                
-                outToServer.writeBytes(out+"\n");
-                if(out.equals("quit"))
-                {
-                    clientSock.close();
-                    stop= false;
-                }            
-            }
-        }
+        });        
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -119,6 +98,11 @@ public class clientForm extends javax.swing.JFrame {
         });
 
         btnSend.setText("SEND");
+        btnSend.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendActionPerformed(evt);
+            }
+        });
 
         btnProfile.setText("PROFIL SAYA");
 
@@ -222,7 +206,7 @@ public class clientForm extends javax.swing.JFrame {
     private void btnPDFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPDFActionPerformed
 
         MessageFormat header = new MessageFormat("Report Print");
-        MessageFormat footer = new MessageFormat("page 1");
+        MessageFormat footer = new MessageFormat("Page 1");
         try
         {
             tblWorking.print(JTable.PrintMode.NORMAL, header, footer);
@@ -232,6 +216,13 @@ public class clientForm extends javax.swing.JFrame {
             System.out.println("errorr");
         }
     }//GEN-LAST:event_btnPDFActionPerformed
+
+    private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
+        ConHandler_1 tmp = (ConHandler_1)cHandler;
+        tmp.sendMessage(txtChat.getText());
+        txtChat.setText("");
+        
+    }//GEN-LAST:event_btnSendActionPerformed
 
     /**
      * @param args the command line arguments
