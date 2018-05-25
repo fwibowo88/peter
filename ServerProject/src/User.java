@@ -125,6 +125,11 @@ public class User {
          
         return msg;
     }
+    
+    public boolean login()
+    {
+    
+    }
     //ATTR FOR USER
     private String idUser;
     private String pwdUser;

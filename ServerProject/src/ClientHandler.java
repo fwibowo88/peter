@@ -68,6 +68,8 @@ public class ClientHandler extends Thread{
                 String clientCmd = in.readLine();
                 System.out.println("CMD >> " + clientCmd);
                 server.DisplayReceived(nameThread, clientCmd);
+                String str = clientCmd;
+                String[] split = str.split("/");
                 
                 if(!server.isServerOn())
                 {
@@ -99,6 +101,36 @@ public class ClientHandler extends Thread{
                 else if(clientCmd.equalsIgnoreCase("test"))
                 {
                     server.BroadcastMsg("Hello World!");
+                
+                }
+                else if(split[0].equals("1"))
+                {
+                    User usr = new User();
+                    
+                
+                }
+                else if(split[0].equals("2"))
+                {
+                
+                }
+                else if(split[0].equals("3"))
+                {
+                
+                }
+                else if(split[0].equals("4"))
+                {
+                    Sheet sh = new Sheet();
+                    sh.editSheet(split[2], split[3]);
+                }
+                else if(split[0].equals("5"))
+                {
+                    User usr = new User();
+                    usr.addUser(split[1], split[2]);
+                }
+                else if(split[0].equals("6"))
+                {
+                    User usr = new User();
+                    usr.editUser();
                 
                 }
             
