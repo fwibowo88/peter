@@ -47,9 +47,79 @@ public class clientForm extends javax.swing.JFrame {
             @Override
             public void tableChanged(TableModelEvent e)
             {
-                System.out.println(e.getColumn()+"-"+e.getLastRow());
+                System.out.println(e.getLastRow()+"-"+e.getColumn());
                 String a = model.getValueAt(e.getLastRow(), e.getColumn()).toString();
-                System.out.println(a);
+                try
+                {
+                    String func = a.substring(0, Math.min(a.length(), 3));
+                    //System.out.println(func);
+                    if (func.equals("AVG"))
+                    {
+                        String temp = a.substring(3);
+                        String[] cell = temp.split(",");
+                        //System.out.println(cell[0]);
+                        //System.out.println(cell[1]);
+                        double val = 0;
+                        for(int i = 0; i < cell.length; i++)
+                        {
+                            System.out.println(cell[i]);
+                            String[] tempCell = cell[i].split(":");
+                            int row = Integer.parseInt(tempCell[0]);
+                            int col = Integer.parseInt(tempCell[1]);
+                            try
+                            {
+                                double avg = 0;
+                                val = (Double.parseDouble(model.getValueAt(row, col).toString()) + val);
+                                avg = val/cell.length;
+                                int crow = e.getLastRow();
+                                int ccol = e.getColumn();
+                                model.setValueAt(avg, crow, ccol);
+                                System.out.println(avg);
+                            }
+                            catch(Exception ex1)
+                            {
+                                System.out.println("bukan angka");
+                            }
+                            
+                        }
+                    }
+                    
+                    if (func.equals("SUM"))
+                    {
+                        String temp = a.substring(3);
+                        String[] cell = temp.split(",");
+                        //System.out.println(cell[0]);
+                        //System.out.println(cell[1]);
+                        double val = 0;
+                        for(int i = 0; i < cell.length; i++)
+                        {
+                            System.out.println(cell[i]);
+                            String[] tempCell = cell[i].split(":");
+                            int row = Integer.parseInt(tempCell[0]);
+                            int col = Integer.parseInt(tempCell[1]);
+                            try
+                            {
+                                double avg = 0;
+                                val = (Double.parseDouble(model.getValueAt(row, col).toString()) + val);
+                                //avg = val/cell.length;
+                                int crow = e.getLastRow();
+                                int ccol = e.getColumn();
+                                model.setValueAt(val, crow, ccol);
+                                System.out.println(val);
+                            }
+                            catch(Exception ex1)
+                            {
+                                System.out.println("bukan angka");
+                            }
+                            
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.out.println(ex);
+                }
+                //System.out.println(a);
             }
         });        
     }
