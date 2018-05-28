@@ -30,8 +30,6 @@ public class ClientHandler extends Thread{
     private BufferedReader in;
     private PrintStream out;
     
-    ArrayList<String> tmpUSRS = new ArrayList<String>();
-    
     
     private Server server;
     
@@ -86,7 +84,7 @@ public class ClientHandler extends Thread{
                     server.Shutdown();
                     System.out.println("CMD >> " + "Client Offline");
                     server.losingClient(this);
-                    tmpUSRS.remove(split[1]);
+                    //tmpUSRS.remove(split[1]);
                 }
                 else if(clientCmd.equalsIgnoreCase("QUIT"))
                 {
@@ -103,12 +101,13 @@ public class ClientHandler extends Thread{
                     if(res == true)
                     {
                         out.println(split[0]+"/"+split[1]+"/"+split[2]+"/"+"OK");//SENT MSG OK VERIFICATION
-                        out.println("02"+"/"+"00"+"/"+"00"+"/"+"RES"); //CLEAR AREA ONLINE
+                        server.BroadcastMsg("02"+"/"+"00"+"/"+"00"+"/"+"RES"); //CLEAR AREA ONLINE
                         server.BroadcastMsg(split[0]+"/"+split[1]+"/"+"00"+"/"+"NOTIF"); // SENT USR NOTIFICATION
-                        tmpUSRS.add(split[1]);//ADD USER TO LIST
-                        for(int x = 0;x<tmpUSRS.size();x++)// SEND LIST ONLINE USER
+                        this.nameThread = split[1];
+                        
+                        for(int x = 0;x<server.listOfClient.size();x++)// SEND LIST ONLINE USER
                         {
-                            out.println("02"+"/"+tmpUSRS.get(x)+"/"+split[2]+"/"+"OL");
+                            server.BroadcastMsg("02"+"/"+server.getName(x)+"/"+split[2]+"/"+"OL");
                         }
                     }
                     else
@@ -158,7 +157,7 @@ public class ClientHandler extends Thread{
                     System.out.println(sTMP[1]);
                     out.println(split[0]+"/"+sTMP[0]+"/"+sTMP[1]+"/"+"RDATA");
                 }
-            
+                
             }
         } catch (IOException e) {
             System.out.println("Try Readline : "+e.getMessage());

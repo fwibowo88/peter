@@ -67,7 +67,9 @@ public class clientForm extends javax.swing.JFrame {
                 String cAksi = "04";
                 String uName = labelUser.getText();
                 String vLocation = e.getLastRow()+"-"+e.getColumn();
+                //vValue = "";
                 String vValue = model.getValueAt(e.getLastRow(), e.getColumn()).toString();
+                
                 try
                 {
                     String func = vValue.substring(0, Math.min(vValue.length(), 3));
@@ -175,6 +177,11 @@ public class clientForm extends javax.swing.JFrame {
                 //System.out.println(vValue);
                 //c = new Client();
                 //String FinalValue = model.getValueAt(e.getLastRow(), e.getColumn()).toString();
+                if (vValue.equals(""))
+                {
+                    System.out.println("000");
+                    vValue = " ";
+                }
                 c.sendMsg(cAksi+"/"+uName+"/"+vLocation+"/"+vValue);
             }
         });        
@@ -237,6 +244,7 @@ public class clientForm extends javax.swing.JFrame {
             else if(split[3].equalsIgnoreCase("NOTIF")) //DEVELOP NOTIF
             {
                 JOptionPane.showMessageDialog(this, split[1] + " is ONLINE");
+                c.sendMsg("09"+"/"+split[1]);
             
             }
 
@@ -298,6 +306,11 @@ public class clientForm extends javax.swing.JFrame {
             pFORM.lblUsername.setText(split[1]);
             pFORM.txtPWD.setText(split[2]);
             pFORM.txtPWD1.setText(split[2]);
+        }
+        
+        else if(split[0].equals("09"))//ADD TO USER ONLINE
+        {
+            txtAreaOnline.append(split[1]+"/n");
         }
     }
     

@@ -83,4 +83,11 @@ public class Server {
     
     }
     
+    public String getName(int x)
+    {
+        String name = "";
+        name = listOfClient.get(x).getNameThread();
+        return name;
+    }
+    
 }
