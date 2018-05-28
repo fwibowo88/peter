@@ -11,7 +11,9 @@
 public class mainServer {
     public static void main(String[] args)throws Exception
     {
+        System.out.println("SERVER STARTED . . .");
         Server srv = new Server();
+        System.out.println("SERVER RUNNING . . .");
     
     }
 }

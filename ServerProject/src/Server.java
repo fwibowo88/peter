@@ -19,6 +19,7 @@ public class Server {
     //SAVE CONNECTED CLIENT
     ArrayList<ClientHandler> listOfClient;
     
+    
     public boolean isServerOn()
     {
         return serverOn;

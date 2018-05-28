@@ -31,7 +31,7 @@ public class dbConnection{
         con = null;
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
-            con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/dbPeter",uid,pwd);
+            con = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/Peter",uid,pwd);
         } catch (Exception e) {
             
         }
