@@ -4,6 +4,8 @@ import com.mysql.jdbc.Statement;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -99,8 +101,9 @@ public class Sheet {
             }
             con.close();
             
-        } catch (Exception e) 
+        } catch (SQLException e) 
         {
+            System.out.println("ERROR : "+e.getMessage());
         
         }
         
@@ -131,5 +134,70 @@ public class Sheet {
         return val;
     }
     
+    public ArrayList<String> getLogData()
+    {
+        ArrayList<String> val= new ArrayList<String>();
+        getConnection();      
+        try 
+        {
+            stat = (Statement) con.createStatement();
+            rs = stat.executeQuery("SELECT * FROM log");
+            while(rs.next())
+            {
+                val.add(rs.getString("time") + "#" + rs.getString("author") + "#"+rs.getString("location"));
+            }
+            con.close();
+        } 
+        catch (Exception e) 
+        {
+            System.out.println("ERROR : " + e.getMessage());
+        }
+        
+        return val;
+    }
+    public int countLogData()
+    {
+        int count = 0;
+        getConnection();      
+        try 
+        {
+            stat = (Statement) con.createStatement();
+            rs = stat.executeQuery("SELECT COUNT(*)AS count FROM log");
+            while(rs.next())
+            {
+                count = rs.getInt("count");
+            }
+            con.close();
+        } 
+        catch (Exception e) 
+        {
+            System.out.println("error get data: " + e.getMessage());
+        }
+        
+        return count;
+    }
+    public boolean insertLog(String xAuth,String xLoc)
+    {
+        getConnection(); 
+        boolean msg = false;
+        try {
+            stat = (Statement)con.createStatement();
+            if(!con.isClosed())
+            {
+                com.mysql.jdbc.PreparedStatement sql = (com.mysql.jdbc.PreparedStatement)con.prepareStatement("INSERT INTO log VALUES(NOW(),?,?)");
+                sql.setString(1, xAuth);
+                sql.setString(2, xLoc);
+                sql.executeUpdate();
+                System.out.println("LOGGING SUCCESS");
+                msg = true;
+                con.close();
+            
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error Insert : "+ex.getMessage());
+        }
+        
+        return msg;
+    }
     
 }

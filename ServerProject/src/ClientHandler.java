@@ -78,21 +78,18 @@ public class ClientHandler extends Thread{
                     out.println("OFF");
                     this.ServiceOff();               
                 }
-                else if(clientCmd.equalsIgnoreCase("OFF"))
+                else if(clientCmd.equalsIgnoreCase("END"))
                 {
                     this.ServiceOff();
-                    server.Shutdown();
+                    //erver.Shutdown();
                     System.out.println("CMD >> " + "Client Offline");
                     server.losingClient(this);
-                    //tmpUSRS.remove(split[1]);
-                }
-                else if(clientCmd.equalsIgnoreCase("QUIT"))
-                {
-                    this.ServiceOff();
-                    server.Shutdown();
-                    System.out.println("CMD >> " + "Client Offline");
-                    System.out.println("CMD >> "+ "Server Off");
-                    server.losingClient(this);
+                    server.BroadcastMsg("02"+"/"+"00"+"/"+"00"+"/"+"RES"); //CLEAR AREA ONLINE
+                    for(int x = 0;x<server.listOfClient.size();x++)// SEND LIST ONLINE USER
+                    {
+                        System.out.println(server.getName(x));
+                        server.BroadcastMsg("02"+"/"+server.getName(x)+"/"+"**"+"/"+"OL");
+                    }
                 }
                 else if(split[0].equals("01")) //LOGIN
                 {
@@ -102,12 +99,13 @@ public class ClientHandler extends Thread{
                     {
                         out.println(split[0]+"/"+split[1]+"/"+split[2]+"/"+"OK");//SENT MSG OK VERIFICATION
                         server.BroadcastMsg("02"+"/"+"00"+"/"+"00"+"/"+"RES"); //CLEAR AREA ONLINE
-                        server.BroadcastMsg(split[0]+"/"+split[1]+"/"+"00"+"/"+"NOTIF"); // SENT USR NOTIFICATION
+                        server.BroadcastMsg("02"+"/"+split[1]+"/"+"00"+"/"+"NOTIF"); // SENT USR NOTIFICATION
                         this.nameThread = split[1];
                         
                         for(int x = 0;x<server.listOfClient.size();x++)// SEND LIST ONLINE USER
                         {
-                            server.BroadcastMsg("02"+"/"+server.getName(x)+"/"+split[2]+"/"+"OL");
+                            System.out.println(server.getName(x));
+                            server.BroadcastMsg("02"+"/"+server.getName(x)+"/"+"**"+"/"+"OL");
                         }
                     }
                     else
@@ -123,11 +121,15 @@ public class ClientHandler extends Thread{
                 {
                     Sheet sh = new Sheet();
                     Boolean res = sh.editSheet(split[2], split[3]);
+                    Boolean msgLog = sh.insertLog(split[1], split[2]);
+                    
                     if (res == true)
                     {
                         System.out.println("UPDATE SUKSES");
                     }
                     server.BroadcastMsg(split[0]+"/"+split[1]+"/"+split[2]+"/"+split[3]);
+                    
+                    
                 }
                 else if(split[0].equals("05")) // GET DATA FROM DB TABLE
                 {
@@ -156,6 +158,19 @@ public class ClientHandler extends Thread{
                     String[] sTMP = tmpData.split("/");
                     System.out.println(sTMP[1]);
                     out.println(split[0]+"/"+sTMP[0]+"/"+sTMP[1]+"/"+"RDATA");
+                }
+                else if(split[0].equals("10")) //LOG TABLE
+                {
+                    Sheet sh = new Sheet();                    
+                    server.BroadcastMsg(split[0]+"/"+"00"+"/"+"00"+"/"+"RES"); //CLEAR AREA LOG
+                    System.out.println(sh.countLogData());
+                    ArrayList<String> xVal = sh.getLogData();
+                    for(int x = 0;x<xVal.size();x++)// SEND LIST LOG
+                    {
+                        System.out.println(xVal.get(x));
+                        String[] sTMP = xVal.get(x).split("#");
+                        server.BroadcastMsg(split[0]+"/"+sTMP[0]+"/"+sTMP[1]+"/"+sTMP[2]);
+                    }
                 }
                 
             }
@@ -189,4 +204,5 @@ public class ClientHandler extends Thread{
         return xx;
     
     }
+    
 }
